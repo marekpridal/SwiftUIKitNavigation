@@ -2,9 +2,12 @@ import UIKit
 
 @MainActor
 public protocol Coordinator: AnyObject, ObservableObject {
-    var childCoordinators: [any Coordinator] { get set }
+    associatedtype Input
 
-    init(navigationController: UINavigationController)
+    var childCoordinators: [any Coordinator] { get set }
+    var input: Input? { get }
+
+    init(navigationController: UINavigationController, input: Input?)
 }
 
 extension Coordinator {
