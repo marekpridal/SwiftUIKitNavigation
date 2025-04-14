@@ -6,7 +6,7 @@ public struct NavigationControllerView<C: Coordinator>: View {
     private let coordinatorDidFinish: ((any Coordinator, C.Output?) -> Void)?
     private let showCloseButton: Bool
 
-    public init(appCoordinator: any Coordinator, input: C.Input? = nil, showCloseButton: Bool = false, coordinatorDidFinish: ((any Coordinator, C.Output?) -> Void)? = nil) {
+    public init(appCoordinator: any Coordinator, input: C.Input? = nil, showCloseButton: Bool = false, coordinatorDidFinish: ((any Coordinator, C.Output?) -> Void)?) {
         self.appCoordinator = appCoordinator
         self.input = input
         self.coordinatorDidFinish = coordinatorDidFinish
