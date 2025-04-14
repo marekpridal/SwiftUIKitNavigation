@@ -2,11 +2,23 @@ import UIKit
 
 @MainActor
 public protocol CoordinatorWithDidFinish: Coordinator {
-    var coordinatorDidFinish: ((any CoordinatorWithDidFinish) -> Void)? { get set }
+    associatedtype Output
+
+    var coordinatorDidFinish: ((CoordinatorOutput<Output>) -> Void)? { get set }
     var navigationController: UINavigationController { get }
     var showCloseButton: Bool { get set }
 
     func setupBackButton()
+}
+
+public final class CoordinatorOutput<Output> {
+    public let coordinator: any CoordinatorWithDidFinish
+    public let outputValue: Output?
+
+    public init(coordinator: any CoordinatorWithDidFinish, outputValue: Output?) {
+        self.coordinator = coordinator
+        self.outputValue = outputValue
+    }
 }
 
 extension CoordinatorWithDidFinish {
@@ -21,7 +33,7 @@ extension CoordinatorWithDidFinish {
 
         let backButton = UIButton(configuration: configuration, primaryAction: UIAction { [weak self] _ in
             guard let self else { return }
-            coordinatorDidFinish(self)
+            coordinatorDidFinish(.init(coordinator: self, outputValue: nil))
         })
         let backButtonImage = UIImage(systemName: "chevron.backward")?.applyingSymbolConfiguration(UIImage.SymbolConfiguration(weight: .semibold))?.withAlignmentRectInsets(UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0))
         backButton.setImage(backButtonImage, for: .normal)
@@ -44,7 +56,7 @@ extension CoordinatorWithDidFinish {
 
         navigationController.navigationBar.topItem?.leftBarButtonItem = UIBarButtonItem(systemItem: .close, primaryAction: UIAction { [weak self] _ in
             guard let self else { return }
-            self.coordinatorDidFinish?(self)
+            coordinatorDidFinish(.init(coordinator: self, outputValue: nil))
         })
     }
 }
